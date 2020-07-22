@@ -1,21 +1,48 @@
 import React from "react"
-import { Link } from "gatsby"
 
 import Layout from "../components/layout"
-import Image from "../components/image"
 import SEO from "../components/seo"
+import PostListing from '../components/Posts/PostListing';
+import { graphql } from "gatsby"
 
-const IndexPage = () => (
-  <Layout>
+const IndexPage = ({ data, location }) => (
+  <Layout location={location}>
     <SEO title="Home" />
-    <h1>Hi people</h1>
-    <p>Welcome to your new Gatsby site.</p>
-    <p>Now go build something great.</p>
-    <div style={{ maxWidth: `300px`, marginBottom: `1.45rem` }}>
-      <Image />
-    </div>
-    <Link to="/page-2/">Go to page 2</Link>
+    <h2>Posts</h2>
+    {data.allMarkdownRemark.edges.map(({node}) => (
+      <PostListing key={node.id} post={node} />
+    ))}
   </Layout>
 )
 
 export default IndexPage
+
+export const query = graphql`
+ query SiteMeta {
+    site {
+      siteMetadata {
+        description
+        title
+      }
+    }
+    allMarkdownRemark(sort: {
+      fields: [frontmatter___date],
+      order: DESC
+    }) {
+      edges {
+        node {
+          id
+          frontmatter {
+            title
+            date(formatString: "DD MMMM YYYY")
+          }
+          fields {
+            slug
+          }
+          html
+          excerpt
+        }
+      }
+    }
+  }
+`

@@ -12,12 +12,20 @@ import { useStaticQuery, graphql } from "gatsby"
 import Header from "./header"
 import "./layout.css"
 
-const Layout = ({ children }) => {
+const Layout = ({ children, location }) => {
   const data = useStaticQuery(graphql`
-    query SiteTitleQuery {
+    query SiteQuery {
       site {
         siteMetadata {
           title
+          description
+        }
+      }
+      background: file(relativePath: { regex: "/bg.jpeg/" }) {
+        childImageSharp {
+          fluid(maxWidth: 1240) {
+            ...GatsbyImageSharpFluid
+          }
         }
       }
     }
@@ -25,7 +33,7 @@ const Layout = ({ children }) => {
 
   return (
     <>
-      <Header siteTitle={data.site.siteMetadata.title} />
+      <Header data={data} location={location} />
       <div
         style={{
           margin: `0 auto`,
